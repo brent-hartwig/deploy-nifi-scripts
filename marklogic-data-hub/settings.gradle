@@ -1,0 +1,6 @@
+rootProject.name = 'marklogic-data-hub'
+
+include 'nifi'
+
+// When the sub-project resides outside of the root project's directory, override its project directory as follows.
+project(':nifi').projectDir = file('../nifi')

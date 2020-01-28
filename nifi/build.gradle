@@ -1,0 +1,56 @@
+import java.text.SimpleDateFormat
+import java.util.Date
+
+plugins {
+  id 'org.hidetake.ssh' version '2.10.1'
+}
+
+remotes {
+  nifi {
+    host = getProject().property('nifiHost')
+    user = getProject().property('nifiServerUsername')
+    identity = file(getProject().property('nifiServerIdentifyFile'))
+  }
+}
+
+def getCurrentTimestamp() {
+  return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault()).format(new Date())
+}
+
+task deployNiFiScripts {
+  def p = getProject()
+  ssh.run {
+    session(remotes.nifi) {
+      // Create target directory, should it not already exit.
+      execute 'sudo mkdir -p "' + p.property('nifiTargetScriptsDir') + '"'
+
+      // Temporarily ownership since `put` doesn't appear to support sudo.
+      execute 'sudo chown -R ' + p.property('nifiServerUsername') + ':' + p.property('nifiServerUsername') + ' "' + p.property('nifiTargetScriptsDir') + '"'
+      
+      // Copy entire directory ...this has the undesired side effect of creating a 'scripts' subdir, which deal with next.
+      put from: p.property('nifiSourceScriptsDir'), into: p.property('nifiTargetScriptsDir')
+
+      // Move copied contents up a level and delete the unwanted 'scripts' sub-dir.
+      // TODO: mv commands fails if first arg is quoted.
+      execute 'sudo mv --backup=numbered ' + p.property('nifiTargetScriptsDir') + '/scripts/* "' + p.property('nifiTargetScriptsDir') + '"'
+      execute 'sudo rmdir "' + p.property('nifiTargetScriptsDir') + '/scripts"'
+
+      // Remove undesired backup files.
+      // TODO: this appears to work better without a quoted path too. Run all paths through a function that escapes spaces?
+      execute 'sudo rm -rf ' + p.property('nifiTargetScriptsDir') + '/*~[' + p.property('nifiScriptBackupLimit') + '-9]~'
+
+      // Denote last deployer and time
+      execute 'sudo echo "' + getCurrentTimestamp() + ': scripts deployed by user ' + remotes.nifi.user + '" >> "' + p.property('nifiTargetScriptsDir') + '/deployment.log"'
+
+      // Set up the scripts to be used by NiFi.
+      execute 'sudo chmod -R ' + p.property('nifiScriptPerms') + ' "' + p.property('nifiTargetScriptsDir') + '"'
+      execute 'sudo chown -R ' + p.property('nifiScriptUser') + ':' + p.property('nifiScriptGroup') + ' "' + p.property('nifiTargetScriptsDir') + '"'
+
+      println 'Scripts deployed within ' + remotes.nifi.host  + ':' + p.property('nifiTargetScriptsDir')
+    }
+  }
+}
+
+task deploy {
+    //dependsOn = ["deployNiFiScripts"]
+}

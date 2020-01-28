@@ -1,0 +1,7 @@
+plugins {
+  id "net.saliman.properties" version "1.5.1"
+  id "com.marklogic.ml-gradle" version "3.17.0"
+}
+
+// Example of drawing in the NiFi sub-project's deployNiFiScripts task.
+mlLoadModules.dependsOn ':nifi:deployNiFiScripts'
