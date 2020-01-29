@@ -1,10 +1,10 @@
 ## Deploy NiFi Scripts to Remote Server
 
-This is a sample project illustrating how one may deploy scripts to a remote NiFi server.*  The scripts are stored outside the NiFi template.  Relevant NiFi processors are to utilize their `scriptFile` property rather than their `scriptBody` property.  Advantages of doing so include being able to review code easier, reusing the code, and allowing multiple developers to work simultaneously a little better than they otherwise would have been able to.
+This is a sample project illustrating how one may deploy scripts to a remote NiFi server.  The scripts are stored outside the NiFi template (not included).  Relevant NiFi processors are to utilize their `scriptFile` property rather than their `scriptBody` property.  Advantages of doing so include being able to review code easier, reuse code, and allow multiple developers to work simultaneously a little better than they otherwise would have been able to.  This may also be used to cover the NiFi script portion of CI/CD.*
 
 The deployment task name is `deployNiFiScripts`, and is defined within `nifi/build.gradle`.  It may be invoked directly, by running Gradle within the `nifi` sub-directory.  It may also be incorporated within `marklogic-data-hub/build.gradle`, such as `mlLoadModules.dependsOn ':nifi:deployNiFiScripts'`.  The barebones MarkLogic Data Hub project is configured to include the `nifi` sub-directory.  Using Gradle's [Multi-Project Build](https://docs.gradle.org/current/userguide/multi_project_builds.html) terminology, the MarkLogic Data Hub project is the "root" project and the NiFi project is its sub-project.
 
-`deployNiFiScripts` copies the contents of a local directory (including its sub-directories) to a remote directory, sets file ownership and permissions, appends a timestamp and username to a `deployment.log` file on the remote server, and will preserve a configurable number of backups.
+`deployNiFiScripts` copies the contents of a local directory (including its sub-directories) to a remote directory, sets file ownership and permissions, appends a timestamp and username to `[nifiTargetScriptsDir]/deployment.log`, and preserves a configurable number of backups.
 
 At this time, this project's implementation is only compatible with UNIX® like operating systems.
 
@@ -42,4 +42,4 @@ nifiScriptPerms=u=rwx,g=rwx,o=rx
 nifiScriptBackupLimit=3
 ```
 
-\* While this project uses the [Gradle SSH Plugin](https://gradle-ssh-plugin.github.io/) to meet a NiFi deployment need common to multiple MarkLogic Data Hub projects, the plugin may be used to copy other files to other remote servers.
+\* While this project uses the [Gradle SSH Plugin](https://gradle-ssh-plugin.github.io/) to meet a common NiFi deployment need, the plugin may be used for additional deployment needs requiring one to copy files and execute commands on remote servers.
