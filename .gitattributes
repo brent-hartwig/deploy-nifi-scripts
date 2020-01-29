@@ -1,0 +1,2 @@
+# These just contain examples that shouldn't influence GitHub's langauge detection.
+nifi/src -linguist-detectable
