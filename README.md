@@ -28,10 +28,10 @@ nifiSourceScriptsDir=../nifi/src/scripts
 nifiTargetScriptsDir=/scripts/demo
 
 # Owner of NiFi scripts once deployed on the NiFi server (typically the NiFi process owner).
-nifiScriptUser=root
+nifiScriptUser=
 
 # User group of the NiFi scripts once deployed on the NiFi server.
-nifiScriptGroup=root
+nifiScriptGroup=
 
 # File permissions to set on the deployed NiFi scripts.
 nifiScriptPerms=u=rwx,g=rwx,o=rx
