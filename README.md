@@ -1,6 +1,6 @@
 ## Deploy NiFi Scripts to Remote Server
 
-This is a sample project illustrating how one may deploy scripts to a remote NiFi server.  The scripts are stored outside the NiFi template (not included).  Relevant NiFi processors are to utilize their `scriptFile` property rather than their `scriptBody` property.  Advantages of doing so include being able to review code easier, reuse code, and allow multiple developers to work simultaneously a little better than they otherwise would have been able to.  This may also be used to cover the NiFi script portion of CI/CD.[^ssh][^templates]
+This is a sample project illustrating how one may deploy scripts to a remote NiFi server.  The scripts are stored outside the NiFi template (not included).  Relevant NiFi processors are to utilize their `scriptFile` property rather than their `scriptBody` property.  Advantages of doing so include being able to review code easier, reuse code, and allow multiple developers to work simultaneously a little better than they otherwise would have been able to.  This may also be used to cover the NiFi script portion of CI/CD.<a href="#sshFn" id="sshRef" title="Note on generalized use."><sup>1</sup></a> <a href="#templatesFn" id="templatesRef" title="Note on complementary project."><sup>2</sup></a>
 
 The deployment task name is `deployNiFiScripts`, and is defined within `nifi/build.gradle`.  It may be invoked directly, by running Gradle within the `nifi` sub-directory.  It may also be incorporated within `marklogic-data-hub/build.gradle`, such as `mlLoadModules.dependsOn ':nifi:deployNiFiScripts'`.  The barebones MarkLogic Data Hub project is configured to include the `nifi` sub-directory.  Using Gradle's [Multi-Project Build](https://docs.gradle.org/current/userguide/multi_project_builds.html) terminology, the MarkLogic Data Hub project is the "root" project and the NiFi project is its sub-project.
 
@@ -42,6 +42,6 @@ nifiScriptPerms=u=rwx,g=rwx,o=rx
 nifiScriptBackupLimit=3
 ```
 
-[^ssh]: While this project uses the [Gradle SSH Plugin](https://gradle-ssh-plugin.github.io/) to meet a common NiFi deployment need, the plugin may be used for additional deployment needs requiring one to copy files and execute commands on remote servers.
+<a id="sshFn" href="#sshRef"><sup>1</sup></a> While this project uses the [Gradle SSH Plugin](https://gradle-ssh-plugin.github.io/) to meet a common NiFi deployment need, the plugin may be used for additional deployment needs requiring one to copy files and execute commands on remote servers.
 
-[^templates]: For the NiFi template portion of automated deployments, please see rjrudin's [nifi-gradle](https://github.com/rjrudin/nifi-gradle/) project.  There's definitely an argument for adding this project's `deployNiFiScripts` Gradle task into the other project!
+<a id="templatesFn" href="#templatesRef"><sup>2</sup></a> For the NiFi template portion of automated deployments, please see rjrudin's [nifi-gradle](https://github.com/rjrudin/nifi-gradle/) project.  There's definitely an argument for adding this project's `deployNiFiScripts` Gradle task into the other project!
